@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUBEBE | 全域合规账本</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Roboto+Mono:wght@400;500&display=swap');
+    
+    :root {
+      --nubebe-emerald-900: #064E3B;
+      --nubebe-emerald-500: #10B981;
+      --nubebe-gold: #D4AF37;
+      --nubebe-bg: #FDFDFD;
+      --nubebe-border: #F1F1F1;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      background-color: var(--nubebe-bg);
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      font-size: 16px; /* 提升基准字号 */
+      line-height: 1.6;
+    }
+
+    .font-serif { font-family: 'Playfair Display', serif; }
+    .font-mono { font-family: 'Roboto Mono', monospace; }
+
+    .nubebe-sidebar {
+      background-color: var(--nubebe-emerald-900);
+      border-right: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .card-jewelry {
+      background: white;
+      border-radius: 32px; /* 稍微加大圆角 */
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      box-shadow: 0 10px 40px -10px rgba(6, 78, 59, 0.05);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-jewelry:hover {
+      box-shadow: 0 20px 60px -15px rgba(6, 78, 59, 0.12);
+      transform: translateY(-4px);
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .gold-accent { color: var(--nubebe-gold); }
+    .gold-border { border-color: var(--nubebe-gold); }
+    .emerald-gradient {
+      background: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
+    }
+
+    .canvas-dot-bg {
+      background-image: radial-gradient(rgba(212, 175, 55, 0.1) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    @keyframes pulse-gold {
+      0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    }
+    .animate-gold-pulse { animation: pulse-gold 2s infinite; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.8s ease-out forwards; }
+
+    /* 滚动条美化 */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
