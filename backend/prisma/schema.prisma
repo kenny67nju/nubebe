@@ -1,0 +1,319 @@
+// Prisma Schema for Nubebe Wealth Management Platform
+// This schema defines the database structure for the compliance ledger system
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String   // Hashed with bcrypt
+  name          String
+  role          UserRole @default(ADVISOR)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  clients       Client[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  ADVISOR
+  CLIENT
+  AUDITOR
+}
+
+// ============================================
+// CLIENT MANAGEMENT
+// ============================================
+
+model Client {
+  id                String   @id @default(cuid())
+  clientCode        String   @unique // e.g., CLIENT_001
+  fullName          String
+  email             String?
+  phone             String?
+  nationality       String[]
+  taxResidency      String[]
+  riskLevel         RiskLevel @default(LOW)
+  onboardingDate    DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  advisorId         String
+  advisor           User     @relation(fields: [advisorId], references: [id])
+
+  events            UnifiedEvent[]
+  bioEvents         BioIdentityEvent[]
+  entities          LegalEntity[]
+
+  @@map("clients")
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// ============================================
+// UNIFIED EVENT (Main Transaction Ledger)
+// ============================================
+
+model UnifiedEvent {
+  id                    String              @id @default(cuid())
+  eventId               String              @unique // evt_001
+  clientId              String
+  client                Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  // Transaction Details
+  eventType             EventType
+  assetClass            AssetClass
+  transactionTime       DateTime
+  postingDate           DateTime
+  settleDate            DateTime?
+
+  // Asset Information
+  assetName             String
+  institutionName       String
+  accountId             String
+
+  // Financial Data
+  quantity              Float
+  price                 Float
+  grossAmount           Float
+  netAmount             Float
+  currency              String
+  functionalAmount      Float              // Converted to CNY
+
+  // Compliance Dimensions
+  legalStructure        LegalStructure
+  sourceCountry         String
+  jurisdictionType      JurisdictionType
+  verificationStatus    VerificationStatus
+  cashFlowNature        CashFlowNature?
+  complianceStatus      ComplianceStatus   @default(COMPLIANT)
+
+  // Fund Flow Tracing
+  counterpartyName      String?
+  linkedEventId         String?
+  linkedEvent           UnifiedEvent?      @relation("EventFlow", fields: [linkedEventId], references: [id])
+  linkedByEvents        UnifiedEvent[]     @relation("EventFlow")
+  fundFlowPath          String[]
+
+  // Custom Tags
+  purposeCategory       PurposeCategory?
+  projectTags           String[]
+
+  // Metadata
+  remark                String?
+  rawData               Json?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+
+  @@index([clientId, eventType])
+  @@index([transactionTime])
+  @@index([complianceStatus])
+  @@map("unified_events")
+}
+
+// ============================================
+// BIO-IDENTITY EVENTS
+// ============================================
+
+model BioIdentityEvent {
+  id                String         @id @default(cuid())
+  eventId           String         @unique
+  clientId          String
+  client            Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  eventType         BioEventType
+  occurrenceDate    DateTime
+  jurisdiction      String
+  documentNumber    String
+  documentType      String
+  expiryDate        DateTime?
+  status            BioEventStatus @default(ACTIVE)
+
+  witnessOrNotary   String?
+  remark            String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@index([clientId, eventType])
+  @@map("bio_identity_events")
+}
+
+// ============================================
+// LEGAL ENTITIES
+// ============================================
+
+model LegalEntity {
+  id                    String                   @id @default(cuid())
+  entityId              String                   @unique
+  entityName            String
+  entityType            EntityType
+  jurisdiction          String
+  incorporationDate     DateTime?
+  governingLaw          String
+
+  clientId              String
+  client                Client                   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  governanceEvents      EntityGovernanceEvent[]
+
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  @@map("legal_entities")
+}
+
+model EntityGovernanceEvent {
+  id                    String          @id @default(cuid())
+  eventId               String          @unique
+
+  entityId              String
+  entity                LegalEntity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
+
+  eventType             GovernanceEventType
+  resolutionDate        DateTime
+  resolutionNumber      String?
+  signatory             String
+  affectedStakeholders  String[]
+  complianceTags        String[]
+
+  remark                String?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([entityId, eventType])
+  @@map("entity_governance_events")
+}
+
+// ============================================
+// ENUMS (Matching Frontend Types)
+// ============================================
+
+enum AssetClass {
+  CASH
+  SECURITY
+  CRYPTO
+  TRUST
+  REAL_ESTATE
+  INSURANCE
+  GOLD
+  ART
+  ALTERNATIVE
+}
+
+enum EventType {
+  TRANSFER_IN
+  TRANSFER_OUT
+  INCOME
+  FEE
+  ADJUSTMENT
+  BANK_DEPOSIT
+  BANK_WITHDRAWAL
+  INTEREST_CREDIT
+  QUICK_PAYMENT
+  TRADE_BUY
+  TRADE_SELL
+  DIVIDEND
+  CRYPTO_BUY
+  CRYPTO_SELL
+  CRYPTO_TRANSFER
+  STAKING_REWARD
+  TRUST_SUBSCRIBE
+  TRUST_DISTRIBUTION
+  TRUST_REDEMPTION
+  ASSET_ACQUISITION
+  ASSET_DISPOSAL
+  DONATION
+}
+
+enum BioEventType {
+  IMMIGRATION_ENTRY
+  IMMIGRATION_EXIT
+  MARRIAGE
+  DIVORCE
+  BIRTH
+  DEATH
+  NATIONALITY_CHANGE
+  TAX_RESIDENCY_CHANGE
+}
+
+enum GovernanceEventType {
+  INCORPORATION
+  DISSOLUTION
+  BOARD_RESOLUTION
+  SHARE_TRANSFER
+  CAPITAL_INCREASE
+  TRUST_SETTLEMENT
+  DIRECTOR_APPOINTMENT
+}
+
+enum LegalStructure {
+  INDIVIDUAL
+  CORPORATE
+  TRUST
+}
+
+enum JurisdictionType {
+  ONSHORE
+  OFFSHORE
+  LONG_ARM
+}
+
+enum VerificationStatus {
+  VERIFIED
+  UNVERIFIED
+  RISK_FLAG
+}
+
+enum CashFlowNature {
+  PASSIVE_IN
+  MAINTENANCE_OUT
+  FREE_CASH_FLOW
+  CAPITAL_MOVEMENT
+}
+
+enum ComplianceStatus {
+  COMPLIANT
+  UNDER_REVIEW
+  NON_COMPLIANT
+}
+
+enum PurposeCategory {
+  EDUCATION
+  LIVING
+  INVESTMENT
+  PHILANTHROPY
+  OTHER
+}
+
+enum BioEventStatus {
+  ACTIVE
+  ARCHIVED
+  PENDING_VERIFICATION
+}
+
+enum EntityType {
+  CORPORATION
+  TRUST
+  FOUNDATION
+  PARTNERSHIP
+  LLC
+}
