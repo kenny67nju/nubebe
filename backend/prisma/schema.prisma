@@ -1,6 +1,3 @@
-// Prisma Schema for Nubebe Wealth Management Platform
-// This schema defines the database structure for the compliance ledger system
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,10 +6,6 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
-// ============================================
-// USER & AUTHENTICATION
-// ============================================
 
 model User {
   id            String   @id @default(cuid())
@@ -27,17 +20,6 @@ model User {
 
   @@map("users")
 }
-
-enum UserRole {
-  ADMIN
-  ADVISOR
-  CLIENT
-  AUDITOR
-}
-
-// ============================================
-// CLIENT MANAGEMENT
-// ============================================
 
 model Client {
   id                String   @id @default(cuid())
@@ -61,17 +43,6 @@ model Client {
 
   @@map("clients")
 }
-
-enum RiskLevel {
-  LOW
-  MEDIUM
-  HIGH
-  CRITICAL
-}
-
-// ============================================
-// UNIFIED EVENT (Main Transaction Ledger)
-// ============================================
 
 model UnifiedEvent {
   id                    String              @id @default(cuid())
@@ -130,10 +101,6 @@ model UnifiedEvent {
   @@map("unified_events")
 }
 
-// ============================================
-// BIO-IDENTITY EVENTS
-// ============================================
-
 model BioIdentityEvent {
   id                String         @id @default(cuid())
   eventId           String         @unique
@@ -157,55 +124,55 @@ model BioIdentityEvent {
   @@map("bio_identity_events")
 }
 
-// ============================================
-// LEGAL ENTITIES
-// ============================================
-
 model LegalEntity {
-  id                    String                   @id @default(cuid())
-  entityId              String                   @unique
-  entityName            String
-  entityType            EntityType
-  jurisdiction          String
-  incorporationDate     DateTime?
-  governingLaw          String
-
-  clientId              String
-  client                Client                   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  governanceEvents      EntityGovernanceEvent[]
-
-  createdAt             DateTime                 @default(now())
-  updatedAt             DateTime                 @updatedAt
+  id                String                  @id @default(cuid())
+  entityId          String                  @unique
+  entityName        String
+  entityType        EntityType
+  jurisdiction      String
+  incorporationDate DateTime?
+  governingLaw      String
+  clientId          String
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  governanceEvents  EntityGovernanceEvent[]
+  client            Client                  @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@map("legal_entities")
 }
 
 model EntityGovernanceEvent {
-  id                    String          @id @default(cuid())
-  eventId               String          @unique
-
-  entityId              String
-  entity                LegalEntity     @relation(fields: [entityId], references: [id], onDelete: Cascade)
-
-  eventType             GovernanceEventType
-  resolutionDate        DateTime
-  resolutionNumber      String?
-  signatory             String
-  affectedStakeholders  String          // Changed from String[] to String
-  complianceTags        String          // Changed from String[] to String
-
-  remark                String?
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  id                   String              @id @default(cuid())
+  eventId              String              @unique
+  entityId             String
+  eventType            GovernanceEventType
+  resolutionDate       DateTime
+  resolutionNumber     String?
+  signatory            String
+  affectedStakeholders String
+  complianceTags       String
+  remark               String?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  entity               LegalEntity         @relation(fields: [entityId], references: [id], onDelete: Cascade)
 
   @@index([entityId, eventType])
   @@map("entity_governance_events")
 }
 
-// ============================================
-// ENUMS (Matching Frontend Types)
-// ============================================
+enum UserRole {
+  ADMIN
+  ADVISOR
+  CLIENT
+  AUDITOR
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
 
 enum AssetClass {
   CASH
