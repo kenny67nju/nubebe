@@ -11,7 +11,7 @@ if (!rootElement) {
 
 // Toggle between authenticated app and original app
 // Set USE_AUTH to true to enable authentication
-const USE_AUTH = true; // Change to true to enable authentication
+const USE_AUTH = true; // Authentication enabled for production use
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
