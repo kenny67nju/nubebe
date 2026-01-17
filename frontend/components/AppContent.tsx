@@ -64,7 +64,7 @@ const AppContent: React.FC = () => {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [events, setEvents] = useState<UnifiedEvent[]>(mockEvents);
   const [isLoadingEvents, setIsLoadingEvents] = useState(false);
-  const [useRealAPI, setUseRealAPI] = useState(false);
+  const [useRealAPI, setUseRealAPI] = useState(true);
 
   // Try to load events from API
   useEffect(() => {
