@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -45,8 +45,8 @@ model Client {
   fullName          String
   email             String?
   phone             String?
-  nationality       String[]
-  taxResidency      String[]
+  nationality       String   // Changed from String[] to String
+  taxResidency      String   // Changed from String[] to String
   riskLevel         RiskLevel @default(LOW)
   onboardingDate    DateTime @default(now())
   createdAt         DateTime @default(now())
@@ -112,11 +112,11 @@ model UnifiedEvent {
   linkedEventId         String?
   linkedEvent           UnifiedEvent?      @relation("EventFlow", fields: [linkedEventId], references: [id])
   linkedByEvents        UnifiedEvent[]     @relation("EventFlow")
-  fundFlowPath          String[]
+  fundFlowPath          String            // Changed from String[] to String
 
   // Custom Tags
   purposeCategory       PurposeCategory?
-  projectTags           String[]
+  projectTags           String            // Changed from String[] to String
 
   // Metadata
   remark                String?
@@ -192,8 +192,8 @@ model EntityGovernanceEvent {
   resolutionDate        DateTime
   resolutionNumber      String?
   signatory             String
-  affectedStakeholders  String[]
-  complianceTags        String[]
+  affectedStakeholders  String          // Changed from String[] to String
+  complianceTags        String          // Changed from String[] to String
 
   remark                String?
   createdAt             DateTime        @default(now())
