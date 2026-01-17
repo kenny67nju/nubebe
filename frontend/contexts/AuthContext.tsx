@@ -35,14 +35,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const response = await authService.getProfile();
             if (response.success && response.data) {
               setUser(response.data);
-            } else {
-              // Token invalid, logout
+            } else if (response.error && (response.error.includes('401') || response.error.includes('Unauthorized'))) {
+              // Only logout if token is actually invalid (401), not on network errors
               authService.logout();
               setUser(null);
             }
-          } catch (error) {
-            authService.logout();
-            setUser(null);
+            // On network errors or other issues, keep user logged in with cached data
+          } catch (error: any) {
+            // Only logout on authentication errors, not network errors
+            if (error.message && (error.message.includes('401') || error.message.includes('Unauthorized'))) {
+              authService.logout();
+              setUser(null);
+            }
+            // Otherwise keep user logged in with cached data
           }
         }
       }
