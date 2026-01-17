@@ -15,10 +15,12 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     setIsLoading(true);
 
     try {
@@ -32,7 +34,14 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
       } else {
         const result = await register({ email, password, name, role: 'ADVISOR' });
         if (result.success) {
-          onSuccess?.();
+          // Show success message and switch to login mode
+          setSuccessMessage('注册成功！请使用您的账号登录。');
+          setIsLogin(true);
+          // Clear form fields
+          setPassword('');
+          setName('');
+          // Clear success message after 5 seconds
+          setTimeout(() => setSuccessMessage(''), 5000);
         } else {
           setError(result.error || 'Registration failed');
         }
@@ -82,6 +91,14 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
               注册
             </button>
           </div>
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-emerald-500/20 border border-emerald-500/50 rounded-xl flex items-center gap-2 text-emerald-200">
+              <AlertCircle className="w-5 h-5 flex-shrink-0" />
+              <span className="text-sm">{successMessage}</span>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
