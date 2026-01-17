@@ -69,9 +69,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (data: RegisterData) => {
     try {
       const response = await authService.register(data);
-      if (response.success) {
-        // Don't automatically log in after registration
-        // User will need to log in with their credentials
+      if (response.success && response.data) {
+        // Automatically log in after successful registration
+        setUser(response.data.user);
         return { success: true };
       } else {
         return { success: false, error: response.error || 'Registration failed' };

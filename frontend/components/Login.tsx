@@ -34,14 +34,9 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
       } else {
         const result = await register({ email, password, name, role: 'ADVISOR' });
         if (result.success) {
-          // Show success message and switch to login mode
-          setSuccessMessage('注册成功！请使用您的账号登录。');
-          setIsLogin(true);
-          // Clear form fields
-          setPassword('');
-          setName('');
-          // Clear success message after 5 seconds
-          setTimeout(() => setSuccessMessage(''), 5000);
+          // Registration successful - user will be automatically logged in
+          // The AuthContext will set the user state and trigger redirect to main app
+          onSuccess?.();
         } else {
           setError(result.error || 'Registration failed');
         }
