@@ -71,9 +71,9 @@ const App: React.FC = () => {
 
       {/* 侧边栏 - 响应式宽度 */}
       {viewMode === 'EXPERT' && (
-        <aside className="w-64 lg:w-72 xl:w-80 nubebe-sidebar flex flex-col text-slate-300 animate-fade-in relative z-50">
-          <div className="p-4 md:p-6 lg:p-8 h-full flex flex-col">
-            <div className="mb-6 lg:mb-10 px-2 shrink-0">
+        <aside className="w-20 lg:w-72 xl:w-80 nubebe-sidebar flex flex-col text-slate-300 animate-fade-in relative z-50">
+          <div className="p-2 lg:p-8 h-full flex flex-col">
+            <div className="mb-4 lg:mb-10 px-1 lg:px-2 shrink-0 flex justify-center lg:justify-start">
               <Logo variant="light" />
             </div>
 
@@ -163,18 +163,23 @@ const App: React.FC = () => {
 const SidebarItem = ({ icon, label, sub, active, onClick, gold }: { icon: string, label: string, sub?: string, active?: boolean, onClick?: () => void, gold?: boolean }) => (
   <button
     onClick={onClick}
-    className={`w-full group flex flex-col px-3 md:px-4 py-2 md:py-3 rounded-xl md:rounded-2xl transition-all duration-300 ${
+    className={`w-full group flex items-center justify-center lg:justify-start px-2 lg:px-4 py-3 lg:py-3 rounded-xl lg:rounded-2xl transition-all duration-300 ${
       active
       ? 'bg-white text-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.3)]'
       : 'hover:bg-white/5 text-white/60'
     }`}
+    title={label}
   >
-    <div className="flex items-center gap-2 md:gap-4 w-full">
-      <span className={`material-icons-round text-xl md:text-2xl ${gold && active ? 'text-[var(--nubebe-gold)]' : ''}`}>{icon}</span>
+    {/* 小屏幕：仅显示图标（居中） */}
+    <span className={`material-icons-round text-2xl lg:hidden ${gold && active ? 'text-[var(--nubebe-gold)]' : ''}`}>{icon}</span>
+
+    {/* 大屏幕：显示图标+文字 */}
+    <div className="hidden lg:flex items-center gap-4 w-full">
+      <span className={`material-icons-round text-2xl ${gold && active ? 'text-[var(--nubebe-gold)]' : ''}`}>{icon}</span>
       <div className="flex flex-col items-start overflow-hidden flex-1 min-w-0">
         <span className="text-responsive-sm font-black tracking-tight truncate w-full">{label}</span>
         {sub && (
-          <span className={`text-responsive-xs font-bold italic tracking-wider transition-opacity duration-300 ${active ? 'text-slate-400 opacity-100' : 'text-white/20 opacity-0 group-hover:opacity-100'} hidden lg:block`}>
+          <span className={`text-responsive-xs font-bold italic tracking-wider transition-opacity duration-300 ${active ? 'text-slate-400 opacity-100' : 'text-white/20 opacity-0 group-hover:opacity-100'}`}>
             {sub}
           </span>
         )}
