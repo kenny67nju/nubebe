@@ -68,12 +68,12 @@ const App: React.FC = () => {
 
   return (
     <div className={`flex h-screen overflow-hidden transition-colors duration-700 ${viewMode === 'CLIENT' ? 'bg-[#FDFDFD]' : ''}`}>
-      
-      {/* 侧边栏 */}
+
+      {/* 侧边栏 - 响应式宽度 */}
       {viewMode === 'EXPERT' && (
-        <aside className="w-72 nubebe-sidebar flex flex-col text-slate-300 animate-fade-in relative z-50">
-          <div className="p-8 h-full flex flex-col">
-            <div className="mb-10 px-2 shrink-0">
+        <aside className="w-64 lg:w-72 xl:w-80 nubebe-sidebar flex flex-col text-slate-300 animate-fade-in relative z-50">
+          <div className="p-4 md:p-6 lg:p-8 h-full flex flex-col">
+            <div className="mb-6 lg:mb-10 px-2 shrink-0">
               <Logo variant="light" />
             </div>
 
@@ -110,44 +110,47 @@ const App: React.FC = () => {
 
       {/* 主区域 */}
       <main className="flex-1 flex flex-col min-w-0 relative overflow-hidden">
-        <header className={`h-24 flex items-center justify-between px-12 z-50 transition-all ${viewMode === 'CLIENT' ? 'bg-transparent' : 'bg-white/80 backdrop-blur-md border-b border-slate-100'}`}>
-          <div className="flex items-center gap-8">
+        <header className={`h-16 md:h-20 lg:h-24 flex items-center justify-between px-4 md:px-8 lg:px-12 z-50 transition-all ${viewMode === 'CLIENT' ? 'bg-transparent' : 'bg-white/80 backdrop-blur-md border-b border-slate-100'}`}>
+          <div className="flex items-center gap-4 md:gap-8 flex-1 min-w-0">
             {viewMode === 'CLIENT' && (
-               <div className="flex items-center gap-4 animate-fade-in">
+               <div className="flex items-center gap-2 md:gap-4 animate-fade-in min-w-0">
                  <Logo variant="dark" withText={false} />
-                 <span className="font-serif italic font-black text-3xl text-emerald-950 border-l border-emerald-900/10 pl-6 ml-2 tracking-tight">Nubebe Private Ledger-Journal</span>
+                 <span className="font-serif italic font-black text-responsive-3xl md:text-responsive-4xl text-emerald-950 border-l border-emerald-900/10 pl-3 md:pl-6 ml-2 tracking-tight truncate">Nubebe Private Ledger-Journal</span>
                </div>
             )}
             {viewMode === 'EXPERT' && (
-              <div className="text-slate-400 text-xs font-black uppercase tracking-widest flex items-center gap-3">
-                 审计中心 <span className="text-[var(--nubebe-gold)] text-lg">/</span> <span className="text-slate-900 text-sm font-black tracking-tight">{getTabDisplayName(activeTab)}</span>
+              <div className="text-slate-400 text-responsive-xs font-black uppercase tracking-widest flex items-center gap-2 md:gap-3 min-w-0">
+                 <span className="hidden md:inline">审计中心</span> <span className="text-[var(--nubebe-gold)] text-responsive-lg">/</span> <span className="text-slate-900 text-responsive-sm font-black tracking-tight truncate">{getTabDisplayName(activeTab)}</span>
               </div>
             )}
           </div>
 
-          <div className="flex items-center bg-slate-100 p-1.5 rounded-full border border-slate-200">
-             <button 
+          <div className="flex items-center bg-slate-100 p-1 md:p-1.5 rounded-full border border-slate-200 flex-shrink-0">
+             <button
                onClick={() => setViewMode('CLIENT')}
-               className={`px-8 py-2.5 rounded-full text-xs font-black tracking-widest transition-all ${viewMode === 'CLIENT' ? 'bg-white text-emerald-900 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+               className={`px-3 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-2.5 rounded-full text-responsive-xs font-black tracking-wider md:tracking-widest transition-all ${viewMode === 'CLIENT' ? 'bg-white text-emerald-900 shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
              >
-               客户视图
+               <span className="hidden md:inline">客户视图</span>
+               <span className="md:hidden">客户</span>
              </button>
-             <button 
+             <button
                onClick={() => setViewMode('EXPERT')}
-               className={`px-8 py-2.5 rounded-full text-xs font-black tracking-widest transition-all ${viewMode === 'EXPERT' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
+               className={`px-3 md:px-6 lg:px-8 py-1.5 md:py-2 lg:py-2.5 rounded-full text-responsive-xs font-black tracking-wider md:tracking-widest transition-all ${viewMode === 'EXPERT' ? 'bg-slate-900 text-white shadow-md' : 'text-slate-500 hover:text-slate-700'}`}
              >
-               专家视图
+               <span className="hidden md:inline">专家视图</span>
+               <span className="md:hidden">专家</span>
              </button>
           </div>
 
-          <div className="flex items-center gap-4">
-             <button className={`${viewMode === 'CLIENT' ? 'text-emerald-950 border-emerald-950 hover:bg-emerald-950 hover:text-white' : 'bg-slate-900 text-white hover:bg-black'} px-8 py-3 text-xs font-black uppercase tracking-widest border-2 transition-all rounded-2xl`}>
-               导出全域审计报告
+          <div className="hidden lg:flex items-center gap-4 flex-shrink-0">
+             <button className={`${viewMode === 'CLIENT' ? 'text-emerald-950 border-emerald-950 hover:bg-emerald-950 hover:text-white' : 'bg-slate-900 text-white hover:bg-black'} px-4 md:px-6 lg:px-8 py-2 md:py-2.5 lg:py-3 text-responsive-xs font-black uppercase tracking-widest border-2 transition-all rounded-2xl whitespace-nowrap`}>
+               <span className="hidden xl:inline">导出全域审计报告</span>
+               <span className="xl:hidden">导出报告</span>
              </button>
           </div>
         </header>
 
-        <section className={`flex-1 overflow-auto transition-all custom-scrollbar ${viewMode === 'CLIENT' ? 'p-0' : 'p-16 bg-[#FDFDFD]'}`}>
+        <section className={`flex-1 overflow-auto transition-all custom-scrollbar ${viewMode === 'CLIENT' ? 'p-0' : 'p-4 md:p-8 lg:p-12 xl:p-16 bg-[#FDFDFD]'}`}>
           {viewMode === 'EXPERT' ? renderExpertContent() : <ClientView events={mockEvents} />}
         </section>
       </main>
@@ -160,18 +163,18 @@ const App: React.FC = () => {
 const SidebarItem = ({ icon, label, sub, active, onClick, gold }: { icon: string, label: string, sub?: string, active?: boolean, onClick?: () => void, gold?: boolean }) => (
   <button
     onClick={onClick}
-    className={`w-full group flex flex-col px-4 py-3 rounded-2xl transition-all duration-300 ${
-      active 
-      ? 'bg-white text-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.3)]' 
+    className={`w-full group flex flex-col px-3 md:px-4 py-2 md:py-3 rounded-xl md:rounded-2xl transition-all duration-300 ${
+      active
+      ? 'bg-white text-slate-900 shadow-[0_15px_40px_rgba(0,0,0,0.3)]'
       : 'hover:bg-white/5 text-white/60'
     }`}
   >
-    <div className="flex items-center gap-4 w-full">
-      <span className={`material-icons-round text-2xl ${gold && active ? 'text-[var(--nubebe-gold)]' : ''}`}>{icon}</span>
-      <div className="flex flex-col items-start overflow-hidden">
-        <span className="text-[14px] font-black tracking-tight truncate w-full">{label}</span>
+    <div className="flex items-center gap-2 md:gap-4 w-full">
+      <span className={`material-icons-round text-xl md:text-2xl ${gold && active ? 'text-[var(--nubebe-gold)]' : ''}`}>{icon}</span>
+      <div className="flex flex-col items-start overflow-hidden flex-1 min-w-0">
+        <span className="text-responsive-sm font-black tracking-tight truncate w-full">{label}</span>
         {sub && (
-          <span className={`text-[9px] font-bold italic tracking-wider transition-opacity duration-300 ${active ? 'text-slate-400 opacity-100' : 'text-white/20 opacity-0 group-hover:opacity-100'}`}>
+          <span className={`text-responsive-xs font-bold italic tracking-wider transition-opacity duration-300 ${active ? 'text-slate-400 opacity-100' : 'text-white/20 opacity-0 group-hover:opacity-100'} hidden lg:block`}>
             {sub}
           </span>
         )}
